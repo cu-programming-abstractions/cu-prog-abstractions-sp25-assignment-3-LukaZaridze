@@ -22,23 +22,14 @@ int drawObtuseTriangle(const Point& apex,
                        const Point& base2,
                        int order);
 
-/* Draws an acute triangle with the specified apex and base points and of
- * the given order, then returns the number of triangles drawn.
- */
 int drawAcuteTriangle(const Point& apex,
                       const Point& base1,
                       const Point& base2,
                       int order) {
-    /* An order-0 triangle is just a literal triangle. */
     if (order == 0) {
         drawTriangle(apex, base1, base2, kCardinal);
         return 1;
-    }
-    /* Otherwise, subdivide the triangle into an acute triangle and an obtuse
-     * triangle. You're welcome to work through the math here that determines
-     * the new corner points if you'd like, but you are not required to do so.
-     */
-    else {
+    } else {
         Point sideMid = apex + (base1 - apex) / kPhi;
 
         int trianglesDrawn = 0;
@@ -48,23 +39,14 @@ int drawAcuteTriangle(const Point& apex,
     }
 }
 
-/* Draws an obtuse triangle with the specified apex and base points and of
- * the given order, then returns the number of triangles drawn.
- */
 int drawObtuseTriangle(const Point& apex,
                        const Point& base1,
                        const Point& base2,
                        int order) {
-    /* An order-0 triangle is just a literal triangle. */
     if (order == 0) {
         drawTriangle(apex, base1, base2, kSandstone);
         return 1;
-    }
-    /* Otherwise, subdivide the triangle into an two obtuse triangles and an
-     * acute triangle. You are welcome to work through the math that computes
-     * the new corner points if you'd like, but you are not required to do so.
-     */
-    else {
+    } else {
         Point baseMid = base1 + (base2 - base1) / kPhi;
         Point sideMid = base1 + (apex - base1) / kPhi;
 
@@ -76,14 +58,7 @@ int drawObtuseTriangle(const Point& apex,
     }
 }
 
-/* Computes the points on the boundary of regular decagon (10-sided polygon) that
- * is centered within the given rectangle.
- */
 Vector<Point> placeDecagonIn(const Rectangle& bounds) {
-    /* Find a square that fits within the bounds. To do this, see if we're taller
-     * than wide or vice-versa and use the shorter side as the dimensions of
-     * our bounding box.
-     */
     Rectangle square;
     if (bounds.width >= bounds.height) {
         square.x = bounds.x + (bounds.width - bounds.height) / 2;
@@ -95,11 +70,9 @@ Vector<Point> placeDecagonIn(const Rectangle& bounds) {
         square.width = square.height = bounds.width;
     }
 
-    /* Points on the boundary of a regular decagon. */
     Point center = { square.x + square.width / 2, square.y + square.height / 2 };
     int radius   = square.width * 0.4;
 
-    /* Compute the points on the border of the decagon using some trig. */
     Vector<Point> decagonPoints;
     for (int i = 0; i < 10; i++) {
         Point pt;
@@ -112,23 +85,14 @@ Vector<Point> placeDecagonIn(const Rectangle& bounds) {
 }
 
 int drawFlagOfRecursia(const Rectangle& bounds) {
-    /* We will draw ten triangles around the border of a decagon (10-sided
-     * regular polygon). Compute the points on the decagon, along with
-     * the center point of the rectangular region.
-     */
     Vector<Point> decagonPoints = placeDecagonIn(bounds);
     Point center = { bounds.x + bounds.width / 2, bounds.y + bounds.height / 2 };
 
-    /* Track how many triangles we drew. */
     int numTriangles = 0;
     for (int i = 0; i < 10; i++) {
-        /* These two points, plus the center, give the corners of the triangle. */
         Point p0 = decagonPoints[i];
         Point p1 = decagonPoints[(i + 1) % 10];
 
-        /* Draw one recursive triangle, remembering how many triangles were drawn in
-         * the process.
-         */
         int triangles = drawAcuteTriangle(center, p0, p1, i);
         numTriangles += triangles;
     }
